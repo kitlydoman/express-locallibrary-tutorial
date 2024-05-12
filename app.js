@@ -10,13 +10,23 @@ const catalogRouter = require("./routes/catalog"); //Import routes for "catalog"
 const compression = require("compression");
 const helmet = require("helmet");
 
+//------------cors---------------
+const cors = require("cors");
+
+const corsOptions = {
+  origin: "http://localhost:3000/",
+};
+//------------cors---------------
+
 var app = express();
+
+app.use(cors(corsOptions));
 
 // Set up rate limiter: maximum of twenty requests per minute
 const RateLimit = require("express-rate-limit");
 const limiter = RateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 40,
+  max: 150,
 });
 // Apply rate limiter to all requests
 app.use(limiter);
@@ -77,7 +87,8 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  // res.render('error'); 
+  res.json({status: err.status, message: err.message});
 });
 
 module.exports = app;
